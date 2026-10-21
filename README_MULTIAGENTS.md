@@ -59,3 +59,16 @@ Nenhum componente acorda conversas GPT inativas por conta própria.
 ## Direitos e origem
 
 Este projeto é um fork do código de Eduard Ruzga e contribuidores, sob licença MIT; a licença e avisos originais foram preservados. Consulte `LICENSE`.
+
+
+## Configurar o plugin ChatGPT Desktop para o fork Node
+
+No IL-7417, execute ap?s compilar o fork:
+
+```powershell
+& "$HOME\Documents\MultiAgentsDesktopCommander\.venv\Scripts\python.exe" "scripts\configure-chatgpt-local.py"
+```
+
+O script faz backup das configura??es existentes e substitui o antigo servidor Python do plugin local pelo MCP Node do fork. Reinicie o ChatGPT Desktop para carregar as mudan?as. **A conex?o em uma conversa ChatGPT s? estar? comprovada depois que o pr?prio modelo chamar `ma_health` ou `start_process` com sucesso**, n?o pelo teste de um cliente SDK isolado.
+
+O servi?o HTTP aceita clientes MCP locais independentes e mant?m sess?es separadas; um ?nico processo de backend nativo atende as sess?es. Cada conversa GPT ativa ainda precisa reivindicar suas pr?prias tarefas.

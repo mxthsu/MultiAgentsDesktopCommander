@@ -1,4 +1,4 @@
-/** 
+/**
  * MultiAgents bridge: native Desktop Commander tools + existing SQLite agent coordination.
  * Separate local stdio processes; no model API, external gateway, or remote listener.
  */
