@@ -9,7 +9,11 @@ $node = (Get-Command node -ErrorAction Stop).Source
 $entry = Join-Path $root 'dist\private-stdio.js'
 if(-not(Test-Path $exe)){throw 'Official tunnel-client not installed'}
 if(-not(Test-Path $entry)){throw 'Compile the fork before configuring a tunnel'}
-if(-not $TunnelId){$TunnelId=Read-Host 'Tunnel ID obtained from OpenAI Platform'}
+if(-not $TunnelId){
+  $savedId=Join-Path $runtime 'tunnel-id.txt'
+  if(Test-Path $savedId){$TunnelId=(Get-Content -Path $savedId -Raw).Trim()}
+  else{$TunnelId=Read-Host 'Tunnel ID obtained from OpenAI Platform'}
+}
 if($TunnelId -notmatch '^tunnel_[a-zA-Z0-9_-]{16,100}$'){throw 'Invalid tunnel ID format'}
 $profileDir=Join-Path $runtime 'profiles'
 $profile='multiagents-readonly'
@@ -27,7 +31,9 @@ if(Test-Path $secretFile){
   Write-Output 'Platform runtime key saved encrypted for current Windows user'
 }
 New-Item -Path $profileDir -ItemType Directory -Force |Out-Null
-$command='"'+$node+'" "'+$entry+'"'
+$nodeArg=$node.Replace('\','/')
+$entryArg=$entry.Replace('\','/')
+$command='"'+$nodeArg+'" "'+$entryArg+'"'
 & $exe init --sample sample_mcp_stdio_local --profile $profile --profile-dir $profileDir --tunnel-id $TunnelId --mcp-command $command --health-listen-addr '127.0.0.1:8878' --force
 if($LASTEXITCODE -ne 0){throw 'Tunnel profile initialization failed'}
 Write-Output 'TUNNEL_PROFILE_CONFIGURED=YES'

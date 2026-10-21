@@ -20,7 +20,8 @@ if(Test-Path $pidFile){
 }
 if(Get-NetTCPConnection -State Listen -LocalPort 8878 -ErrorAction SilentlyContinue){throw 'Health port 8878 in use'}
 # DPAPI decryption only succeeds as the same Windows user who stored the key.
-$secure=Get-Content $keyFile -Raw|ConvertTo-SecureString
+$encrypted=(Get-Content -Path $keyFile -Raw -ErrorAction Stop).Trim()
+$secure=ConvertTo-SecureString -String $encrypted -ErrorAction Stop
 $bstr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
 try { $env:CONTROL_PLANE_API_KEY=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr) }
 finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
