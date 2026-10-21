@@ -50,6 +50,9 @@ async function getNativeClient(): Promise<Client> {
         args:[path.join(import.meta.dirname,'index.js'),'--no-onboarding'],
         cwd:path.resolve(import.meta.dirname,'..'),
         stderr:'pipe',
+        // The MCP SDK only forwards a limited default environment unless specified.
+        // Preserve the selected workspace when crossing the stdio process boundary.
+        env:Object.fromEntries(Object.entries(process.env).filter(([,value])=>typeof value==='string')) as Record<string,string>,
       });
       await candidate.connect(child);
       sharedNative = candidate;
