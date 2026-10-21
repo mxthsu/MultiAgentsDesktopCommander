@@ -1,4 +1,5 @@
 import path from 'path';
+import { listMultiAgentsTools, isMultiAgentsTool, callMultiAgentsTool } from './multiagents-bridge.js';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
     CallToolRequestSchema,
@@ -1143,6 +1144,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
         ];
 
+        // Augment the original Desktop Commander with coordination tools.
+        allTools.push(...await listMultiAgentsTools());
+
         // Filter tools based on current client
         const filteredTools = allTools.filter(tool => shouldIncludeTool(tool.name));
 
@@ -1246,6 +1250,12 @@ async function handleCallToolRequest(request: CallToolRequest): Promise<ServerRe
             telemetryData.set_config_value_key_name = (args as any).key;
         }
 
+
+        if (isMultiAgentsTool(name)) {
+            // Pass through one shared local coordinator, no LLM calls.
+            // Tool-level permissions are enforced by the host before invocation.
+            return await callMultiAgentsTool(name, args) as ServerResult;
+        }
 
         // Track tool call
         trackToolCall(name, args);

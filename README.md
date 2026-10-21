@@ -1,4 +1,7 @@
 # Desktop Commander MCP
+
+> **Fork MultiAgents Desktop Commander:** integracao com tarefas, skills, memoria e multiplas sessoes MCP locais. Consulte [README_MULTIAGENTS.md](README_MULTIAGENTS.md).
+
 ### Search, update, manage files and run terminal commands with AI
 
 [![npm downloads](https://img.shields.io/npm/dw/@wonderwhy-er/desktop-commander)](https://www.npmjs.com/package/@wonderwhy-er/desktop-commander)
